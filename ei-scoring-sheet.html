@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Intelligence Score Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+        }
+        
+        p.subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        table th {
+            background-color: #f2f2f2;
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .results {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 0 4px 4px 0;
+            display: none;
+        }
+        
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .interpretation {
+            font-style: italic;
+            color: #34495e;
+            margin-top: 15px;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .technique-info {
+            display: none;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .form-row label {
+            flex: 1;
+        }
+        
+        .form-row input {
+            flex: 0 0 80px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .summary-table {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .progress-container {
+            background-color: #eee;
+            border-radius: 4px;
+            margin: 15px 0;
+            height: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 1s;
+        }
+        
+        @media screen and (max-width: 600px) {
+            table {
+                font-size: 14px;
+            }
+            
+            input[type="number"] {
+                width: 50px;
+                padding: 6px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .form-row input {
+                margin-top: 5px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Emotional Intelligence Score Calculator</h1>
+        <p class="subtitle">Track how effectively you manage your emotional responses</p>
+        
+        <div class="form-group">
+            <div class="form-row">
+                <label for="scenario-select">Select Scenario:</label>
+                <select id="scenario-select">
+                    <option value="1">Receiving critical feedback</option>
+                    <option value="2">Team member missing a deadline</option>
+                    <option value="3">Being interrupted in meetings</option>
+                    <option value="4">Having decisions questioned</option>
+                    <option value="5">Unexpected project changes</option>
+                    <option value="6">Conflict between team members</option>
+                    <option value="custom">Custom scenario (enter below)</option>
+                </select>
+            </div>
+            
+            <div id="custom-scenario" style="display: none;">
+                <div class="form-row">
+                    <label for="custom-scenario-text">Your Scenario:</label>
+                    <input type="text" id="custom-scenario-text" style="flex: 1; width: 100%;" placeholder="Describe your trigger situation">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="form-row">
+                <label for="initial-emotion">Initial Emotional Reaction (1-10):</label>
+                <input type="number" id="initial-emotion" min="1" max="10" value="5">
+            </div>
+            <div class="error" id="initial-error">Please enter a value between 1 and 10</div>
+            <p style="margin-top: 5px; font-size: 14px; color: #666;">
+                1 = Doesn't bother me at all, 10 = Makes me extremely upset
+            </p>
+        </div>
+        
+        <div class="form-group">
+            <div class="form-row">
+                <label for="technique-select">Calming Technique Used:</label>
+                <select id="technique-select">
+                    <option value="">-- Select a technique --</option>
+                    <option value="deep-breathing">Deep breathing (4-7-8 method)</option>
+                    <option value="reframing">Cognitive reframing</option>
+                    <option value="pause">Taking a brief pause</option>
+                    <option value="visualization">Calming visualization</option>
+                    <option value="grounding">5-4-3-2-1 grounding technique</option>
+                    <option value="self-talk">Positive self-talk</option>
+                    <option value="other">Other (specify below)</option>
+                </select>
+            </div>
+            
+            <div id="other-technique" style="display: none;">
+                <div class="form-row">
+                    <label for="other-technique-text">Your Technique:</label>
+                    <input type="text" id="other-technique-text" style="flex: 1; width: 100%;" placeholder="Describe your technique">
+                </div>
+            </div>
+            
+            <div class="technique-info" id="deep-breathing-info">
+                <strong>Deep breathing (4-7-8 method):</strong> Inhale for 4 seconds, hold for 7 seconds, exhale for 8 seconds. This technique activates your parasympathetic nervous system to reduce stress.
+            </div>
+            <div class="technique-info" id="reframing-info">
+                <strong>Cognitive reframing:</strong> Consciously shifting your perspective on a situation, looking for alternative interpretations or focusing on aspects you can control.
+            </div>
+            <div class="technique-info" id="pause-info">
+                <strong>Taking a brief pause:</strong> Deliberately pausing before responding to give your brain time to process emotions and respond rationally rather than reactively.
+            </div>
+            <div class="technique-info" id="visualization-info">
+                <strong>Calming visualization:</strong> Mental imagery of a peaceful place or situation to activate the relaxation response and reduce emotional intensity.
+            </div>
+            <div class="technique-info" id="grounding-info">
+                <strong>5-4-3-2-1 grounding technique:</strong> Focusing on your five senses to anchor yourself in the present moment (identify 5 things you see, 4 things you feel, 3 things you hear, 2 things you smell, 1 thing you taste).
+            </div>
+            <div class="technique-info" id="self-talk-info">
+                <strong>Positive self-talk:</strong> Using supportive internal dialogue to counter negative thoughts and create psychological distance from triggering situations.
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="form-row">
+                <label for="after-emotion">Emotional State After Technique (1-10):</label>
+                <input type="number" id="after-emotion" min="1" max="10" value="3">
+            </div>
+            <div class="error" id="after-error">This value should be less than or equal to your initial emotion</div>
+            <p style="margin-top: 5px; font-size: 14px; color: #666;">
+                1 = Completely calm, 10 = Still very upset
+            </p>
+        </div>
+        
+        <button id="calculate-btn">Calculate Score</button>
+        <button id="add-to-summary-btn" style="display:none;">Add to Summary</button>
+        
+        <div class="results" id="results">
+            <h2>Your Emotional Regulation Score</h2>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="score-display" id="score-display"></div>
+            
+            <div id="explanation"></div>
+            
+            <div class="interpretation" id="interpretation"></div>
+        </div>
+        
+        <div class="summary-table" id="summary-section">
+            <h2>Summary of Your Emotional Regulation</h2>
+            
+            <table id="summary-table">
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Initial</th>
+                        <th>Technique</th>
+                        <th>After</th>
+                        <th>Improvement</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-body">
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 20px;">
+                <div class="form-row">
+                    <span><strong>Average Score:</strong></span>
+                    <span id="average-score">0</span>
+                </div>
+                <div class="form-row">
+                    <span><strong>Most Effective Technique:</strong></span>
+                    <span id="effective-technique">None yet</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Elements
+        const scenarioSelect = document.getElementById('scenario-select');
+        const customScenario = document.getElementById('custom-scenario');
+        const customScenarioText = document.getElementById('custom-scenario-text');
+        const initialEmotion = document.getElementById('initial-emotion');
+        const techniqueSelect = document.getElementById('technique-select');
+        const otherTechnique = document.getElementById('other-technique');
+        const otherTechniqueText = document.getElementById('other-technique-text');
+        const afterEmotion = document.getElementById('after-emotion');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const addToSummaryBtn = document.getElementById('add-to-summary-btn');
+        const results = document.getElementById('results');
+        const scoreDisplay = document.getElementById('score-display');
+        const explanation = document.getElementById('explanation');
+        const interpretation = document.getElementById('interpretation');
+        const progressBar = document.getElementById('progress-bar');
+        const initialError = document.getElementById('initial-error');
+        const afterError = document.getElementById('after-error');
+        const summarySection = document.getElementById('summary-section');
+        const summaryBody = document.getElementById('summary-body');
+        const averageScore = document.getElementById('average-score');
+        const effectiveTechnique = document.getElementById('effective-technique');
+        
+        // Variables
+        let scenarios = [
+            "Receiving critical feedback",
+            "Team member missing a deadline",
+            "Being interrupted in meetings",
+            "Having decisions questioned",
+            "Unexpected project changes",
+            "Conflict between team members"
+        ];
+        
+        let summaryData = [];
+        let currentScore = 0;
+        
+        // Interpretations
+        const scoreInterpretations = [
+            { min: 0, max: 30, message: "You have an opportunity to significantly improve your emotional regulation skills. Try practicing the techniques consistently, even in low-stress situations to build your emotional regulation abilities." },
+            { min: 31, max: 60, message: "You're making progress with emotional regulation. Your awareness of your emotional state is developing, and you're starting to effectively use calming techniques." },
+            { min: 61, max: 80, message: "Good emotional regulation skills! You're effectively using techniques to manage your emotional responses in challenging situations." },
+            { min: 81, max: 100, message: "Excellent emotional self-management! You have a strong ability to recognize your emotional triggers and effectively regulate your response." }
+        ];
+        
+        // Event Listeners
+        scenarioSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customScenario.style.display = 'block';
+            } else {
+                customScenario.style.display = 'none';
+            }
+        });
+        
+        techniqueSelect.addEventListener('change', function() {
+            // Hide all technique info divs
+            document.querySelectorAll('.technique-info').forEach(div => {
+                div.style.display = 'none';
+            });
+            
+            if (this.value === 'other') {
+                otherTechnique.style.display = 'block';
+            } else {
+                otherTechnique.style.display = 'none';
+                
+                // Show info for the selected technique
+                const infoDiv = document.getElementById(`${this.value}-info`);
+                if (infoDiv) {
+                    infoDiv.style.display = 'block';
+                }
+            }
+        });
+        
+        calculateBtn.addEventListener('click', calculateScore);
+        addToSummaryBtn.addEventListener('click', addToSummary);
+        
+        // Calculate score
+        function calculateScore() {
+            // Reset error messages
+            initialError.style.display = 'none';
+            afterError.style.display = 'none';
+            
+            // Validate inputs
+            const initial = parseInt(initialEmotion.value);
+            const after = parseInt(afterEmotion.value);
+            
+            if (isNaN(initial) || initial < 1 || initial > 10) {
+                initialError.style.display = 'block';
+                return;
+            }
+            
+            if (isNaN(after) || after < 1 || after > 10) {
+                afterError.textContent = "Please enter a value between 1 and 10";
+                afterError.style.display = 'block';
+                return;
+            }
+            
+            if (after > initial) {
+                afterError.textContent = "This value should be less than or equal to your initial emotion";
+                afterError.style.display = 'block';
+                return;
+            }
+            
+            // Calculate improvement
+            const improvement = initial - after;
+            
+            // Calculate weight based on initial emotion intensity
+            // Higher initial emotions get more weight
+            const weight = 0.7 + (initial / 30);
+            
+            // Calculate weighted score (out of 100)
+            let score = Math.round((improvement * weight / initial) * 100);
+            
+            // Higher initial values get bonus points
+            if (initial >= 8) {
+                score += 10;
+            }
+            
+            // Cap score at 100
+            score = Math.min(score, 100);
+            
+            // Store current score
+            currentScore = score;
+            
+            // Display results
+            displayResults(score, improvement, initial, after);
+            
+            // Show add to summary button
+            addToSummaryBtn.style.display = 'block';
+        }
+        
+        // Display results
+        function displayResults(score, improvement, initial, after) {
+            results.style.display = 'block';
+            scoreDisplay.textContent = score;
+            
+            // Find appropriate interpretation
+            const interpretation = scoreInterpretations.find(range => 
+                score >= range.min && score <= range.max
+            );
+            
+            // Build explanation text
+            let explanationText = `<p>You started with an emotional intensity of <strong>${initial}/10</strong> and reduced it to <strong>${after}/10</strong>, 
+                                  improving by <strong>${improvement} points</strong>.</p>
+                                  <p>Based on our weighted scoring system (which gives more credit for managing higher initial emotions):
+                                  <ul>
+                                    <li>Initial intensity weight: ${weight.toFixed(2)}</li>
+                                    <li>Raw improvement: ${improvement} points</li>
+                                    <li>Weighted score: ${score} points</li>
+                                  </ul>`;
+                                  
+            if (initial >= 8) {
+                explanationText += "<p>You received a bonus for effectively managing a high-intensity emotional reaction.</p>";
+            }
+            
+            explanation.innerHTML = explanationText;
+            interpretation.textContent = interpretation.message;
+            
+            // Animate progress bar
+            setTimeout(() => {
+                progressBar.style.width = `${score}%`;
+                
+                // Set color based on score
+                if (score < 30) {
+                    progressBar.style.backgroundColor = '#e74c3c'; // red
+                } else if (score < 60) {
+                    progressBar.style.backgroundColor = '#f39c12'; // orange
+                } else if (score < 80) {
+                    progressBar.style.backgroundColor = '#3498db'; // blue
+                } else {
+                    progressBar.style.backgroundColor = '#2ecc71'; // green
+                }
+            }, 100);
+        }
+        
+        // Add current results to summary
+        function addToSummary() {
+            // Get scenario
+            let scenarioText;
+            if (scenarioSelect.value === 'custom') {
+                scenarioText = customScenarioText.value.trim() || "Custom scenario";
+            } else {
+                scenarioText = scenarios[parseInt(scenarioSelect.value) - 1];
+            }
+            
+            // Get technique
+            let techniqueText;
+            if (techniqueSelect.value === 'other') {
+                techniqueText = otherTechniqueText.value.trim() || "Custom technique";
+            } else if (techniqueSelect.value === '') {
+                techniqueText = "Not specified";
+            } else {
+                techniqueText = techniqueSelect.options[techniqueSelect.selectedIndex].text;
+            }
+            
+            // Create entry
+            const entry = {
+                scenario: scenarioText,
+                initial: parseInt(initialEmotion.value),
+                technique: techniqueText,
+                techniqueId: techniqueSelect.value,
+                after: parseInt(afterEmotion.value),
+                improvement: parseInt(initialEmotion.value) - parseInt(afterEmotion.value),
+                score: currentScore
+            };
+            
+            // Add to summary data
+            summaryData.push(entry);
+            
+            // Update summary table
+            updateSummary();
+            
+            // Show summary section
+            summarySection.style.display = 'block';
+            
+            // Hide add to summary button
+            addToSummaryBtn.style.display = 'none';
+            
+            // Reset form for next entry
+            resetForm();
+        }
+        
+        // Update summary table
+        function updateSummary() {
+            // Clear table
+            summaryBody.innerHTML = '';
+            
+            // Add rows
+            summaryData.forEach(entry => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${entry.scenario}</td>
+                    <td>${entry.initial}</td>
+                    <td>${entry.technique}</td>
+                    <td>${entry.after}</td>
+                    <td>${entry.improvement}</td>
+                    <td>${entry.score}</td>
+                `;
+                
+                summaryBody.appendChild(row);
+            });
+            
+            // Update average score
+            const totalScore = summaryData.reduce((sum, entry) => sum + entry.score, 0);
+            const avgScore = Math.round(totalScore / summaryData.length);
+            averageScore.textContent = avgScore;
+            
+            // Analyze most effective technique
+            analyzeEffectiveTechniques();
+        }
+        
+        // Analyze most effective techniques
+        function analyzeEffectiveTechniques() {
+            if (summaryData.length < 2) {
+                effectiveTechnique.textContent = "Need more data";
+                return;
+            }
+            
+            const techniqueEffectiveness = {};
+            
+            // Calculate average effectiveness for each technique
+            summaryData.forEach(entry => {
+                const techId = entry.techniqueId || 'unspecified';
+                
+                if (!techniqueEffectiveness[techId]) {
+                    techniqueEffectiveness[techId] = {
+                        name: entry.technique,
+                        scores: [],
+                        improvements: [],
+                        count: 0
+                    };
+                }
+                
+                techniqueEffectiveness[techId].scores.push(entry.score);
+                techniqueEffectiveness[techId].improvements.push(entry.improvement);
+                techniqueEffectiveness[techId].count++;
+            });
+            
+            // Calculate averages
+            for (const techId in techniqueEffectiveness) {
+                if (techniqueEffectiveness[techId].count < 2) continue;
+                
+                const scores = techniqueEffectiveness[techId].scores;
+                const improvements = techniqueEffectiveness[techId].improvements;
+                
+                techniqueEffectiveness[techId].avgScore = 
+                    scores.reduce((sum, score) => sum + score, 0) / scores.length;
+                    
+                techniqueEffectiveness[techId].avgImprovement = 
+                    improvements.reduce((sum, imp) => sum + imp, 0) / improvements.length;
+            }
+            
+            // Find most effective technique
+            let bestTechnique = null;
+            let bestScore = -1;
+            
+            for (const techId in techniqueEffectiveness) {
+                if (techniqueEffectiveness[techId].count < 2) continue;
+                
+                if (techniqueEffectiveness[techId].avgScore > bestScore) {
+                    bestScore = techniqueEffectiveness[techId].avgScore;
+                    bestTechnique = techId;
+                }
+            }
+            
+            if (bestTechnique) {
+                effectiveTechnique.textContent = `${techniqueEffectiveness[bestTechnique].name} (Avg improvement: ${techniqueEffectiveness[bestTechnique].avgImprovement.toFixed(1)} points)`;
+            } else {
+                effectiveTechnique.textContent = "Not enough data for each technique";
+            }
+        }
+        
+        // Reset form
+        function resetForm() {
+            initialEmotion.value = "5";
+            afterEmotion.value = "3";
+            techniqueSelect.value = "";
+            scenarioSelect.selectedIndex = 0;
+            customScenario.style.display = 'none';
+            otherTechnique.style.display = 'none';
+            document.querySelectorAll('.technique-info').forEach(div => {
+                div.style.display = 'none';
+            });
+            results.style.display = 'none';
+        }
+        
+        // Helper function to calculate weight
+        function weight(initial) {
+            return 0.7 + (initial / 30);
+        }
+    </script>
+</body>
+</html>
